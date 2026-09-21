@@ -5,10 +5,10 @@
 %table#movies
   %thead
     %tr
-      %th= link_to "Título", movies_path(sort: "title")
+      %th{class: ('hilite' if @sort == 'title')}= link_to "Título", movies_path(sort: "title"), id: 'title_header'
       %th Classificação
       %th Sinopse
-      %th= link_to "Lançamento", movies_path(sort: "release_date")
+      %th{class: ('hilite' if @sort == 'release_date')}= link_to "Lançamento", movies_path(sort: "release_date"), id: 'release_date_header'
       %th Detalhes
   %tbody
     - @movies.each do |movie|
