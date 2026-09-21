@@ -1,24 +1,32 @@
-# README
+# RottenPotatoes 🍿
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Aplicação para gerenciamento e avaliação de filmes em Ruby on Rails.
 
-Things you may want to cover:
+## 🚀 Como executar o projeto localmente
 
-* Ruby version
+### 1. Instalar dependências
 
-* System dependencies
+```bash
+bundle install
+```
 
-* Configuration
+### 2. Preparar o banco de dados
 
-* Database creation
+```bash
+bin/rails db:migrate
+bin/rails db:seed
+```
 
-* Database initialization
+### 3. Executar os testes automatizados
 
-* How to run the test suite
+```bash
+bin/rails test
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+### 4. Iniciar o servidor
 
-* Deployment instructions
+```bash
+bin/rails server
+```
 
-* ...
+Acesse `http://localhost:3000/movies` no seu navegador.
