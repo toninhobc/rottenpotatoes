@@ -3,9 +3,24 @@ class MoviesController < ApplicationController
 
   # GET /movies or /movies.json
   def index
+    @all_ratings = Movie.all_ratings
+
+    # 1. Tratar as classificações selecionadas
+    # Se params[:ratings] existir (veio do formulário), pegamos suas chaves.
+    # Caso contrário, selecionamos todas por padrão.
+    if params[:ratings].present?
+      @selected_ratings = params[:ratings].keys
+    else
+      @selected_ratings = @all_ratings
+    end
+
+    # 2. Tratar a ordenação com Allowlist
     allowed_sorts = %w[title release_date]
     @sort = params[:sort] if allowed_sorts.include?(params[:sort])
-    @movies = @sort ? Movie.order(@sort) : Movie.all
+
+    # 3. Fazer a busca combinando Filtro (where) e Ordenação (order)
+    @movies = Movie.where(rating: @selected_ratings)
+    @movies = @movies.order(@sort) if @sort.present?
   end
 
   # GET /movies/1 or /movies/1.json
