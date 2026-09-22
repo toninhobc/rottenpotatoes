@@ -5,23 +5,43 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
 
-    # 1. Tratar as classificações selecionadas
-    # Se params[:ratings] existir (veio do formulário), pegamos suas chaves.
-    # Caso contrário, selecionamos todas por padrão.
+    # 1. Verificar se é necessário redirecionar com base na sessão
+    # Se a requisição NÃO trouxe parâmetros de sort/ratings,
+    # mas eles existem na sessão:
+    if params[:sort].nil? && params[:ratings].nil? &&
+      (session[:sort].present? || session[:ratings].present?)
+      flash.keep
+      redirect_to movies_path(
+        sort: session[:sort],
+        ratings: session[:ratings]
+      ) and return
+    end
+
+    # 2. Capturar ordenação (dos parâmetros ou da sessão)
+    allowed_sorts = %w[title release_date]
+    sort_param = params[:sort] || session[:sort]
+    @sort = sort_param if allowed_sorts.include?(sort_param)
+
+    # 3. Capturar classificações (dos parâmetros ou da sessão)
     if params[:ratings].present?
       @selected_ratings = params[:ratings].keys
+    elsif session[:ratings].present?
+      @selected_ratings = session[:ratings].is_a?(Hash) ?
+        session[:ratings].keys :
+        session[:ratings]
     else
       @selected_ratings = @all_ratings
     end
 
-    # 2. Tratar a ordenação com Allowlist
-    allowed_sorts = %w[title release_date]
-    @sort = params[:sort] if allowed_sorts.include?(params[:sort])
+    # 4. Salvar o estado atual na sessão para requisições futuras
+    session[:sort] = @sort
+    session[:ratings] = params[:ratings] ||
+                        Hash[@selected_ratings.map { |r| [r, "1"] }]
 
-    # 3. Fazer a busca combinando Filtro (where) e Ordenação (order)
+    # 5. Buscar e ordenar filmes no banco de dados
     @movies = Movie.where(rating: @selected_ratings)
     @movies = @movies.order(@sort) if @sort.present?
-  end
+end
 
   # GET /movies/1 or /movies/1.json
   def show
