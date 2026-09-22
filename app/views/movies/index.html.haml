@@ -2,13 +2,26 @@
 
 %h1.title Todos os Filmes
 
+-# Formulário de Filtragem por Classificação
+= form_tag movies_path, method: :get, id: 'ratings_form' do
+  -# Mantém a ordenação ativa ao filtrar, se houver
+  = hidden_field_tag :sort, @sort if @sort.present?
+
+  Incluir:
+  - @all_ratings.each do |rating|
+    = rating
+    = check_box_tag "ratings[#{rating}]", "1", @selected_ratings.include?(rating), id: "ratings_#{rating}"
+  = submit_tag 'Filtrar', id: 'ratings_submit'
+
+%br
+
 %table#movies
   %thead
     %tr
-      %th{class: ('hilite' if @sort == 'title')}= link_to "Título", movies_path(sort: "title"), id: 'title_header'
+      %th{class: ('hilite' if @sort == 'title')}= link_to "Título", movies_path(sort: "title", ratings: Hash[@selected_ratings.map { |r| [r, "1"] }]), id: 'title_header'
       %th Classificação
       %th Sinopse
-      %th{class: ('hilite' if @sort == 'release_date')}= link_to "Lançamento", movies_path(sort: "release_date"), id: 'release_date_header'
+      %th{class: ('hilite' if @sort == 'release_date')}= link_to "Lançamento", movies_path(sort: "release_date", ratings: Hash[@selected_ratings.map { |r| [r, "1"] }]), id: 'release_date_header'
       %th Detalhes
   %tbody
     - @movies.each do |movie|

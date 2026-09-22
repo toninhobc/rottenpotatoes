@@ -6,4 +6,9 @@ class Movie < ApplicationRecord
     validates :title, presence: true
     validates :rating, inclusion: { in: RATINGS }
     validates :release_date, presence: true
+
+    # Método de classe que retorna todas as classificações
+    def self.all_ratings
+        RATINGS
+    end
 end
